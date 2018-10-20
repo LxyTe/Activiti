@@ -156,4 +156,48 @@
    * 一个流程中，执行对象可以存在多个，但是流程实例只能有一个。
    * 当流程按照规则只执行一次的时候，那么流程实例就是执行对象。
 	
+   ## 案例
+   ![HelloWorld图](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/diagrams/tt.png)
+      >> 1.2[详细代码](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/tt/HelloTt.java)
+      
+   ## 管理流程定义 
+   此处还是上面那个流程图  
+  >> 1.3[管理流程定义](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/processdefinition/ProcessDefinitionTest.java) 
+  
+     上面代码主要写了
+          1.部署流程定义（classpath路径加载文件）
+	  1.2部署流程定义（zip格式文件加载）
+          2.如何查询流程定义(多种查询方式)
+	  3.删除流程定义
+	  4.获取流程定义文档的资源（查看流程图附件）
+	  5.查询最新版本的流程定义
+	  6.删除流程定义（删除key相同的所有不同版本的流程定义
+	  
+  bpmn文件 
+      
+       流程规则文件。在部署后，每次系统启动时都会被解析，把内容封装成流程定义放入项目缓存中。Activiti框架结合这个xml文件自动管理流程，流程的执行就是按照bpmn文件定义的规则执行的，bpmn文件是给计算机执行用的。
+  
+  png图片
+   
+    在系统里需要展示流程的进展图片，图片是给用户看的。让用户知道流程是如何走的，有哪些人接收流程
+    
+   小结
+     
+      Deployment   部署对象
+    1、一次部署的多个文件的信息。对于不需要的流程可以删除和修改。
+    2、对应的表：
+   	 act_re_deployment：部署对象表
+  	 act_re_procdef：流程定义表
+ 	 act_ge_bytearray：资源文件表
+ 	 act_ge_property：主键生成策略表
+
+	ProcessDefinition 流程定义
+	1、解析.bpmn后得到的流程定义规则的信息，工作流系统就是按照流程定义的规则执行的。
+
+    
+   > 流程变量
+            
+	    流程变量在整个工作流中扮演很重要的作用。例如：请假流程中有请假天数、请假原因等一些参数都为流程变量的范围。流程变量的作用域范围是只对应一个流程实例。也就是说各个流程实例的流程变量是不相互影响的。流程实例结束完成以后流程变量还保存在数据库中（存放到流程变量的历史表中  act_hi_varinst）。
+	    
+    
 	 
