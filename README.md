@@ -238,4 +238,78 @@
 	     
 ### 流程历史执行记录
    1.5[流程历史执行记录查看](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/historyquery/HistoryQueryTest.java)
-	    
+   
+### 连线   
+![连线](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E8%BF%9E%E7%BA%BF.png)
+  1.6[连线设置流程变量查看](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/sequenceFlow/SequenceFlowTest.java)
+       说明：
+     1）使用流程变量，设置连线需要的流程变量的名称message，并设置流程变量的值对应,流程会按照指定的连线完成任务,设置的流程变量名字要和你判断的那个名字一致。
+     
+ ### 排他网关(串行)
+ ![排他网关](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E6%8E%92%E4%BB%96%E7%BD%91%E5%85%B3.png)
+ 1.7[排他网关](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/gateway/GateWayTest.java)
+ 
+ 设置
+    说明：
+	1)一个排他网关对应一个以上的顺序流
+	2)由排他网关流出的顺序流都有个conditionExpression元素，在内部维护返回boolean类型的决策结果。
+	3)决策网关只会返回一条结果。当流程执行到排他网关时，流程引擎会自动检索网关出口，从上到下检索如果发现第一条决策结果为true或者没有设置条件的(默认为成立)，则流出。
+	4)如果没有任何一个出口符合条件，则抛出异常
+	使用流程变量，设置连线的条件，并按照连线的条件执行工作流，如果没有条件符合的条件，则以默认的连线离开。例如：
+	![tu](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E6%8E%92%E4%BB%96%E7%BD%91%E5%85%B3%E8%AF%A6%E7%BB%86%E8%AF%B4%E6%98%8E.png)
+     
+  ### 并行网关
+  
+  ![并行网关](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/gateway/parallelGateWay.png)
+  1.8[并行网关查看](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/gateway/parallelGateWay.java)
+     
+      说明：
+	1）一个流程中流程实例只有1个，执行对象有多个
+	2）并行网关的功能是基于进入和外出的顺序流的：
+	分支(fork)： 并行后的所有外出顺序流，为每个顺序流都创建一个并发分支。
+	汇聚(join)： 所有到达并行网关，在此等待的进入分支， 直到所有进入顺序流的分支都到达以后， 流程就会通过汇聚网关。
+	3）并行网关的进入和外出都是使用相同节点标识
+	4）如果同一个并行网关有多个进入和多个外出顺序流， 它就同时具有分支和汇聚功能。 这时，网关会先汇聚所有进入的顺序流，然后再切分成多个并行分	支。
+	5）并行网关不会解析条件。 即使顺序流中定义了条件，也会被忽略。
+        6) 并行网关不需要是“平衡的”（比如， 对应并行网关的进入和外出节点数目不一定相等）。如图中标示是合法的：
+ ![bx](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E5%B9%B6%E8%A1%8C%E7%BD%91%E5%85%B3.png)	    
+    
+  上图中的两个不同的并行网关Task3走到最后一个并行网关口的时候，会在哪里等待Task1和Task2执行完成然后回合，只有全部的并行网关或者汇合完毕，流程才算走完。
+  ### 接收活动（receiveTask，即等待活动，其它的任务都是userTask，这里的任务不一样）
+  ![等待任务](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E7%AD%89%E5%BE%85%E4%BB%BB%E5%8A%A1.png)
+  1.9[等待任务查看](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/receivetask/ReceiveTaskTest.java)
+  
+  在任务创建后，意味着流程会进入等待状态， 直到引擎接收了一个特定的消息（执行下一步）， 这会触发流程穿过接收任务继续执行。
+     
+     说明：
+	1）当前任务（一般指机器自动完成，但需要耗费一定时间的工作）完成后，向后推移流程，可以调用runtimeService.signal(executionId)，传递接收执行对象的id。
+  
+  ### 个人任务
+  2.0[个人任务查看](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/personaltask/PersonalTask.java)
+  
+     设置个人任务办理人的时候
+     1.可以直接在bpmn图形化界面指定（不推荐）
+     2.使用流程变量指定(操作方式和上面设置流程变量差不多)
+     3.使用监听类指定（注意;不需要指定办理人）
+     
+   ![兔兔](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E7%B1%BB%E5%8A%A0%E8%BD%BD%E6%8C%87%E5%AE%9A%E4%BB%BB%E5%8A%A1%E5%8A%9E%E7%90%86%E4%BA%BA.png) 
+   上面配置之后再加载流程图BPMN文件的时候，会自动指定任务的办理人
+    
+    总结
+	个人任务及三种分配方式：
+    1：在taskProcess.bpmn中直接写 assignee=“张三丰"
+    2：在taskProcess.bpmn中写 assignee=“#{userID}”，变量的值要是String的。
+         使用流程变量指定办理人
+    3，使用TaskListener接口，要使类实现该接口，在类中定义：
+         delegateTask.setAssignee(assignee);// 指定个人任务的办理人
+    
+     使用任务ID和办理人重新指定办理人：
+      processEngine.getTaskService()//
+                           .setAssignee(taskId, userId);
+			   
+   ### 组任务
+   ![zu任务](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E7%BB%84%E4%BB%BB%E5%8A%A1.png)
+   组任务下面的那个框表示角色组
+   
+  
+  
