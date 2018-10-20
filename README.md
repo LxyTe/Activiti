@@ -309,7 +309,26 @@
 			   
    ### 组任务
    ![zu任务](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E7%BB%84%E4%BB%BB%E5%8A%A1.png)
-   组任务下面的那个框表示角色组
+   组任务下面的那个框表示角色组 
+   2.1[个人组任务查看](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/grouptask/GroupTask.java)
+   其它操作和个人任务类似
+     
+        3）act_ru_identitylink表存放任务的办理人，包括个人任务和组任务，表示正在执行的任务
+	4）act_hi_identitylink表存放任务的办理人，包括个人任务和组任务，表示历史任务
+    区别在于：如果是个人任务 TYPE的类型表示participant（参与者）
+			 如果是组任务TYPE的类型表示candidate（候选者）和participant（参与者）
+     小结:
+     组任务及三种分配方式：
+    1：在taskProcess.bpmn中直接写 candidate-users=“小A,小B,小C,小D"
+    2：在taskProcess.bpmn中写 candidate-users =“#{userIDs}”，变量的值要是String的。
+         使用流程变量指定办理人
+              Map<String, Object> variables = new HashMap<String, Object>();
+              variables.put("userIDs", "大大,小小,中中");
+    3，使用TaskListener接口，使用类实现该接口，在类中定义：
+            //添加组任务的用户
+     delegateTask.addCandidateUser(userId1);
+     delegateTask.addCandidateUser(userId2);
+
    
   
   
