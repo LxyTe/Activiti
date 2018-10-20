@@ -113,13 +113,47 @@
    >  RepositoryService 
     
       是Activiti的仓库服务类。所谓的仓库指流程定义文档的两个文件：bpmn文件和流程图片。(加载对应的流程图片生成流程图)
-   >  RuntimeService
+   1.1[流程定义相关代码](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/processdefinition/ProcessDefinitionTest.java) 
+   
+   >  RuntimeServic  
        
        是activiti的流程执行服务类。可以从这个服务类中获取很多关于流程执行相关的信息。
+       目前我用的最多的就是用来启动流程服务
+       	public void startProcessEngine() {
+	ProcessInstance processInstance=	 processEngine.getRuntimeService()//与正在执行的流程实例和执行对象相关的Service
+		             .startProcessInstanceByKey("tt"); //使用流程定义的key启动流程实施，key对应的值,使用key启动，默认启动的是最新版本
+		System.out.println("流程实例id:"+processInstance.getId());
+		System.out.println("流程定义id:"+processInstance.getProcessDefinitionId());
+	}
    >   TaskService
 
-     是activiti的任务服务类。可以从这个类中获取任务的信息。 
-      
-   1.1[查看实例代码](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/tt/HelloTt.java)  
-      
+     是activiti的任务服务类。可以从这个类中获取任务的信息，也可以创建组任务，个人任务，流程变量等。
+        
+ 
+  >  HistoryService
+     
+        是activiti的查询历史信息的类。在一个流程执行完成后，这个对象为我们提供查询历史信息。所有的历史信息都是经过HistoryService来进行查询的
+
+ >  ProcessDefinition  
+ 
+         流程定义类。可以从这里获得资源文件(bpmn图)等。
+ 
+ >  ProcessInstance
+  
+         代表流程定义的执行实例。如某人想走一个流程，那么就会创建一个专门为此流程服务的流程实例。一个流程实例包括了所有的运行节点。我们可以利用这个对象来了解当前流程实例的进度等信息。流程实例就表示一个流程从开始到结束的最大的流程分支，即一个流程中流程实例只有一个。
    
+ >  Execution
+ 
+     Activiti用这个对象去描述流程执行的每一个节点。在没有并发的情况下，Execution就是同ProcessInstance。流程按照流程定义的规则执行一次的过程，就可以表示执行对象Execution。
+	ProcessInstance的源代码：public interface ProcessInstance extends Execution {}
+	
+   ![流程实例](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E6%B5%81%E7%A8%8B%E5%AE%9E%E4%BE%8B.png)
+      在单线流程中，如上图的贷款流程，ProcessInstance与Execution是一致的。
+   ![多线流程](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E6%89%A7%E8%A1%8C%E5%AF%B9%E8%B1%A1.png) 
+   多线流程：wire money(汇钱)和archive(存档)是并发执行的。	这个时候，总线路代表ProcessInstance，而分线路中每个活动代表Execution。
+   
+   总结 
+   * 一个流程中，执行对象可以存在多个，但是流程实例只能有一个。
+   * 当流程按照规则只执行一次的时候，那么流程实例就是执行对象。
+	
+	 
