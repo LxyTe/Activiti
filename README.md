@@ -195,9 +195,47 @@
 	1、解析.bpmn后得到的流程定义规则的信息，工作流系统就是按照流程定义的规则执行的。
 
     
-   > 流程变量
+   ### 流程变量
             
 	    流程变量在整个工作流中扮演很重要的作用。例如：请假流程中有请假天数、请假原因等一些参数都为流程变量的范围。流程变量的作用域范围是只对应一个流程实例。也就是说各个流程实例的流程变量是不相互影响的。流程实例结束完成以后流程变量还保存在数据库中（存放到流程变量的历史表中  act_hi_varinst）。
 	    
+	  
+   ![流程变量图](https://github.com/LxyTe/Activiti/blob/master/%E6%B5%81%E7%A8%8B%E5%8F%98%E9%87%8F.png) 
+   1.4 [查看流程变量代码](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/processvariabletest/ProcessVariablesTest.java)
     
-	 
+     说明：
+      1)流程变量的作用域就是流程实例，所以只要设置就行了，不用管在哪个阶段设置
+      2)基本类型设置流程变量，在taskService中使用任务ID，定义流程变量的名称，设置流程变量的值。
+      3)Javabean类型设置流程变量，需要这个javabean实现了Serializable接口
+      4)设置流程变量的时候，向act_ru_variable这个表添加数据
+      5）流程变量的获取针对流程实例（即1个流程），每个流程实例获取的流程变量时不同的
+      6）使用基本类型获取流程变量，在taskService中使用任务ID，流程变量的名称，获取流程变量的值。
+      7）Javabean类型设置获取流程变量，除了需要这个javabean实现了Serializable接口外，还要求流程变量对象的属性不能发生变化，否则抛出异常。解决方案，固定序列化ID
+      
+  ![流程变量获取和设置接口](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/resources/img/%E6%B5%81%E7%A8%8B%E5%8F%98%E9%87%8F%E8%AE%BE%E7%BD%AE%E5%92%8C%E8%8E%B7%E5%8F%96.png)
+      
+      获取和设置:
+      1）RuntimeService对象可以设置流程变量和获取流程变量
+      2）TaskService对象可以设置流程变量和获取流程变量
+      3）流程实例启动的时候可以设置流程变量
+      4）任务办理完成的时候可以设置流程变量
+      5）流程变量可以通过名称/值的形式设置单个流程变量
+      6）流程变量可以通过Map集合，同时设置多个流程变量
+         Map集合的key表示流程变量的名称
+         Map集合的value表示流程变量的值
+      7) 流程变量支持的类型有 : String ,Integer ,short , long , double , booelean ,  date , serializable
+    
+    
+    >总结
+     在流程执行或者任务执行的过程中，用于设置和获取变量，使用流程变量在流程传递的过程中传递业务参数。
+       对应的表：
+               act_ru_variable：正在执行的流程变量表
+               act_hi_varinst：流程变量历史表
+       特别说明: 
+            •setVariable和setVariableLocal的区别
+	    setVariable：设置流程变量的时候，流程变量名称相同的时候，后一次的值替换前一次的值，而且可以看到TASK_ID的字段不会存放任务ID的值
+	    setVariableLocal:设置流程变量的时候，针对当前活动的节点设置流程变量，如果一个流程中存在2个活动节点，对每个活动节点都设置流程变量，即使流程变量的名称相同，后一次的版本的值也不会替换前一次版本的值，但是 它里面的每个流程变量只属于单独的流程节点，当任务到下一个流程节点的时候，就无法获取上个节点中设置的流程变量
+	     
+### 流程历史执行记录
+   1.5[流程历史执行记录查看](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/historyquery/HistoryQueryTest.java)
+	    
