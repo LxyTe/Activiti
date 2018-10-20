@@ -34,6 +34,7 @@
      
        act_hi_attachment     历史附件表，目前没用到（后续补充）
        
+       
        act_hi_comment        历史意见表 后续补充
        
        act_hi_identitylink   历史流程人员表 ， 执行过流程的人员，都在此表中有记录（此表中有type字段，可对应上面的运行时流程人员表act_ru_identitylink ）
@@ -63,6 +64,62 @@
        
        act_ge_property			属性数据表存储整个流程引擎级别的数据,初始化表结构时，会默认插入三条记录 ,有一个字段表示下一个流程定义的id
        
+   ## 核心配置文件activiti.cfg.xml
      
+       上述的配置文件，在获取流程变量的时候会自动读取resources下的文件，名字必须是一样的
+       Activiti核心配置文件，配置流程引擎创建工具的基本参数和数据库连接池参数。
+      定义数据库配置参数：
+     jdbcUrl: 数据库的JDBC URL。
+     jdbcDriver: 对应不同数据库类型的驱动。
+     jdbcUsername: 连接数据库的用户名。
+     jdbcPassword: 连接数据库的密码。
+     基于JDBC参数配置的数据库连接 会使用默认的MyBatis连接池。 下面的参数可以用来配置连接池（来自MyBatis参数）：
+    jdbcMaxActiveConnections: 连接池中处于被使用状态的连接的最大值。默认为10。
+    jdbcMaxIdleConnections: 连接池中处于空闲状态的连接的最大值。 
+    jdbcMaxCheckoutTime: 连接被取出使用的最长时间，超过时间会被强制回收。 默认为20000（20秒）。
+     jdbcMaxWaitTime: 这是一个底层配置，让连接池可以在长时间无法获得连接时， 打印一条日志，并重新尝试获取一个连接。（避免因为错误配置导致沉默的操作失败）。 默认为20000（20秒）。
+     示例
+     <bean id="processEngineConfiguration" class="org.activiti.engine.impl.cfg.StandaloneProcessEngineConfiguration">
+	   	<!-- 连接数据的配置 -->
+	   	<property name="jdbcDriver" value="com.mysql.jdbc.Driver"></property>
+	   	<property name="jdbcUrl" value="jdbc:mysql://localhost:3306/activiti?useUnicode=true&amp;characterEncoding=utf8"></property>
+	   	<property name="jdbcUsername" value="root"></property>
+	   	<property name="jdbcPassword" value="123"></property>
+	   	<!-- true没有表创建表 , false(默认) 检查数据库表的版本和依赖库的版本是否一致
+	  	 create-drop 创建流程引擎时，创建表，流程结束时，删除表
+	  	 -->
+	  	<property name="databaseSchemaUpdate" value="true"></property>
+	   </bean>
+   
+  ### 核心API
+   > ProcessEngine 流程引擎
+   1)在Activiti中最核心的类对象，其他的类对象都是由它而来。
+    ProcessEngine processEngine=	ProcessEngines.getDefaultProcessEngine();
+    上面的接口，会自动记载 activiti.cfg.xml 配置文件中内容
+      
+      作用：
+     1. 可以产生RepositoryService  (流程定义服务对象) 
+     RepositoryService  repositoryService= processEngine.getRepositoryService()
+     
+     2. 可以产生RuntimeService  （运行时服务对象）
+          RuntimeService  runtimeService=    processEngine.getRuntimeService()
+    
+    3. 可以产生TaskService (任务服务对象)
+    TaskService taskService =  processEngine.getTaskService
+    
+    4.HistoryService	历史管理(执行完的数据的管理)
+     IdentityService	组织机构管理  等等
+     
+   >  RepositoryService 
+    
+      是Activiti的仓库服务类。所谓的仓库指流程定义文档的两个文件：bpmn文件和流程图片。(加载对应的流程图片生成流程图)
+   >  RuntimeService
        
-       
+       是activiti的流程执行服务类。可以从这个服务类中获取很多关于流程执行相关的信息。
+   >   TaskService
+
+     是activiti的任务服务类。可以从这个类中获取任务的信息。 
+      
+   1.1[查看实例代码](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/tt/HelloTt.java)  
+      
+   
