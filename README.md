@@ -113,7 +113,7 @@
    >  RepositoryService 
     
       是Activiti的仓库服务类。所谓的仓库指流程定义文档的两个文件：bpmn文件和流程图片。(加载对应的流程图片生成流程图)
-   1.1[流程定义相关代码](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/processdefinition/ProcessDefinitionTest.java) 
+
    
    >  RuntimeServic  
        
@@ -194,6 +194,14 @@
 	ProcessDefinition 流程定义
 	1、解析.bpmn后得到的流程定义规则的信息，工作流系统就是按照流程定义的规则执行的。
 
+   ### 流程实例
+   1.3.1[查看流程实例](https://github.com/LxyTe/Activiti/blob/master/Activiti-parent/Activiti-One/src/main/java/com/dist/processinstance/ProcessInstanceTest.java)
+     
+      说明:
+         1.activiti将从act_ru_task表中删除该任务，下一个任务会被插入进来。每个流程实例在此表中只会存在一条记录（当前执行节点），此表数据少，查询速度快。
+	 2.查询流程状态的时候 :
+	  由于一个流程实例ID只对应一个实例，使用singleResult执行查询返回一个唯一的结果，如果结果数量大于1，则抛出异常,这个时候可以用list来返回一个结果集
+	  判断指定ID的实例是否存在，如果结果为空，则代表流程结束，实例在正在执行的执行对象表中已被删除，转换成历史数据。
     
    ### 流程变量
             
